@@ -67,7 +67,7 @@
         let urlParams = new URLSearchParams(window.location.search);
         let inviteId = urlParams.get('invite_id') || "default";
         let creatorId = urlParams.get('creator_id') || "0";
-        let customMsg = urlParams.get('msg') || "Мен сени жолугушууга чакырам!";
+        let customMsg = decodeURIComponent(urlParams.get('msg')) || "Мен сени жолугушууга чакырам!";
         let senderName = urlParams.get('sender') || "Бирөө"; // Жигиттин атын алабыз
 
         // Жигит жазган сөздү жана атын экранга чыгарабыз
