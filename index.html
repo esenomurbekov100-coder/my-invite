@@ -6,25 +6,83 @@
 <title>Чакыруу 💌</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-    body { background: linear-gradient(to right, #24243e, #302b63, #0f0c29); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; color: #fff; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background: linear-gradient(to right, #24243e, #302b63, #0f0c29); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; color: #fff; overflow: hidden; }
     .card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 30px 24px; width: 100%; max-width: 400px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); text-align: center; position: relative; }
     .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #ff007f, #ff7b00, #ff007f); background-size: 200% 100%; animation: glow 2s linear infinite; }
     @keyframes glow { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
-    .emoji { font-size: 70px; margin-bottom: 15px; display: block; }
-    h1 { font-size: 22px; margin-bottom: 10px; background: -webkit-linear-gradient(45deg, #ff007f, #ff7b00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    
+    .emoji { font-size: 60px; margin-bottom: 10px; display: block; }
+    h1 { font-size: 22px; margin-bottom: 20px; background: -webkit-linear-gradient(45deg, #ff007f, #ff7b00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    
     .sender-name { font-size: 14px; color: #aaa; margin-bottom: 20px; }
     .message { background: rgba(0, 0, 0, 0.3); border-left: 4px solid #ff007f; padding: 20px 16px; border-radius: 12px; margin: 20px 0 30px; font-size: 18px; font-style: italic; color: #eee; line-height: 1.5; }
-    .label { display: block; text-align: left; font-weight: 600; margin: 20px 0 10px; color: #ff7b00; font-size: 14px; text-transform: uppercase; }
-    input[type="datetime-local"], select { width: 100%; padding: 16px; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 14px; font-size: 16px; background: rgba(0, 0, 0, 0.4); color: #fff; outline: none; color-scheme: dark; }
+    
+    .label { display: block; text-align: left; font-weight: 600; margin: 15px 0 10px; color: #ff7b00; font-size: 14px; text-transform: uppercase; }
+    
+    input[type="date"], select { width: 100%; padding: 16px; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 14px; font-size: 16px; background: rgba(0, 0, 0, 0.4); color: #fff; outline: none; color-scheme: dark; }
     input:focus, select:focus { border-color: #ff007f; }
+    
     button { width: 100%; padding: 16px; margin-top: 15px; border: none; border-radius: 14px; font-size: 17px; font-weight: 700; cursor: pointer; transition: 0.3s; }
     button:active { transform: scale(0.95); }
-    .btn-primary { background: linear-gradient(45deg, #ff007f, #ff7b00); color: #fff; box-shadow: 0 8px 20px rgba(255, 0, 127, 0.4); }
+    .btn-primary { background: linear-gradient(45deg, #ff007f, #ff7b00); color: #fff; box-shadow: 0 8px 20px rgba(255, 0, 127, 0.4); margin-top: 25px; }
     .btn-secondary { background: rgba(255, 255, 255, 0.1); color: #ccc; }
+    
     .page { display: none; animation: fadeIn 0.5s ease; }
     .page.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* --- 3D УБАКЫТ ТАНДОО (БАРАБАН) СТИЛИ --- */
+    .time-picker-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin: 20px 0;
+        position: relative;
+        height: 150px;
+        background: rgba(0, 0, 0, 0.4);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        overflow: hidden;
+        perspective: 1000px;
+    }
+
+    /* Жогору жана төмөн жагын караңгылатуу (3D эффект үчүн) */
+    .time-picker-container::before, .time-picker-container::after {
+        content: ''; position: absolute; left: 0; right: 0; height: 50px; z-index: 10; pointer-events: none;
+    }
+    .time-picker-container::before { top: 0; background: linear-gradient(to bottom, rgba(30,30,47,1), rgba(30,30,47,0)); }
+    .time-picker-container::after { bottom: 0; background: linear-gradient(to top, rgba(30,30,47,1), rgba(30,30,47,0)); }
+
+    /* Тандалган сандын жаркыраган сызыгы */
+    .selection-bar {
+        position: absolute; top: 50%; left: 10%; right: 10%; height: 50px;
+        transform: translateY(-50%);
+        border-top: 2px solid #ff007f; border-bottom: 2px solid #ff007f;
+        box-shadow: 0 0 15px rgba(255,0,127,0.5);
+        pointer-events: none; z-index: 5;
+    }
+
+    .wheel {
+        height: 100%; width: 60px;
+        overflow-y: scroll; scroll-snap-type: y mandatory;
+        scrollbar-width: none; -ms-overflow-style: none;
+        padding: 50px 0; /* Ортосуна түшүү үчүн */
+    }
+    .wheel::-webkit-scrollbar { display: none; }
+
+    .wheel-item {
+        height: 50px; display: flex; justify-content: center; align-items: center;
+        font-size: 24px; font-weight: bold; color: #888;
+        scroll-snap-align: center; transition: all 0.2s;
+        cursor: pointer;
+    }
+    /* Тандалган сандын түсү */
+    .wheel-item.active { color: #fff; font-size: 28px; text-shadow: 0 0 10px #ff007f; }
+    
+    .colon { font-size: 28px; font-weight: bold; color: #ff007f; z-index: 2; margin-top: -10px; }
+
 </style>
 </head>
 <body>
@@ -40,12 +98,24 @@
             <button class="btn-secondary" onclick="sayNo()">Жок, бара албайм 💔</button>
         </div>
 
-        <!-- 2-БЕТ -->
+        <!-- 2-БЕТ (ЖАҢЫ 3D УБАКЫТ ТАНДОО) -->
         <div class="page" id="page2">
             <span class="emoji">📅</span>
-            <h1>Сонун! Качан жолугабыз?</h1>
-            <label class="label">Күн жана убакыт:</label>
-            <input type="datetime-local" id="date">
+            <h1>Качан жолугабыз?</h1>
+            
+            <label class="label">Күндү тандаңыз:</label>
+            <input type="date" id="dateInput">
+            
+            <label class="label">Убакытты айлантып тандаңыз:</label>
+            <div class="time-picker-container">
+                <div class="selection-bar"></div>
+                <!-- Саат -->
+                <div class="wheel" id="hourWheel"></div>
+                <div class="colon">:</div>
+                <!-- Мүнөт -->
+                <div class="wheel" id="minuteWheel"></div>
+            </div>
+            
             <button class="btn-primary" onclick="checkDate()">Кийинки ➡️</button>
         </div>
 
@@ -72,6 +142,7 @@
     tg.ready();
     tg.expand();
 
+    // --- URL'ден МААЛЫМАТТАРДЫ АЛУУ ---
     const params = new URLSearchParams(window.location.search);
     const inviteId = params.get('invite_id') || '';
     const creatorId = params.get('creator_id') || '';
@@ -81,10 +152,60 @@
     document.getElementById('senderName').textContent = `${sender} сизди чакырат:`;
     document.getElementById('customMessage').textContent = `"${msg}"`;
 
-    const now = new Date();
-    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-    document.getElementById('date').min = now.toISOString().slice(0, 16);
+    // --- УБАКЫТ БАРАБАНЫН (WHEEL) ТҮЗҮҮ ---
+    const hourWheel = document.getElementById('hourWheel');
+    const minuteWheel = document.getElementById('minuteWheel');
 
+    // Сааттарды (00-23) толтуруу
+    for (let i = 0; i < 24; i++) {
+        let div = document.createElement('div');
+        div.className = 'wheel-item';
+        div.textContent = i.toString().padStart(2, '0');
+        hourWheel.appendChild(div);
+    }
+    // Мүнөттөрдү (00-59) толтуруу
+    for (let i = 0; i < 60; i++) {
+        let div = document.createElement('div');
+        div.className = 'wheel-item';
+        div.textContent = i.toString().padStart(2, '0');
+        minuteWheel.appendChild(div);
+    }
+
+    // Бүгүнкү күндүн минималдуу маанисин коюу
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    document.getElementById('dateInput').min = `${year}-${month}-${day}`;
+
+    // Айланганда сандардын түсүн өзгөртүү (Active Class)
+    function updateActiveItem(wheel) {
+        const items = wheel.querySelectorAll('.wheel-item');
+        const wheelCenter = wheel.scrollTop + wheel.clientHeight / 2;
+        items.forEach(item => {
+            const itemCenter = item.offsetTop + item.clientHeight / 2;
+            if (Math.abs(wheelCenter - itemCenter) < 25) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+    }
+
+    // Скролл болгондо иштөөчү функциялар
+    hourWheel.addEventListener('scroll', () => updateActiveItem(hourWheel));
+    minuteWheel.addEventListener('scroll', () => updateActiveItem(minuteWheel));
+
+    // Башында ортодогу санды тандап туруу
+    setTimeout(() => {
+        // Азыркы убакытты тандап туруу (мисалы 18:00)
+        hourWheel.scrollTop = 18 * 50; 
+        minuteWheel.scrollTop = 0;
+        updateActiveItem(hourWheel);
+        updateActiveItem(minuteWheel);
+    }, 100);
+
+    // Баракчаларды алмаштыруу
     function goToPage(pageNum) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById('page' + pageNum).classList.add('active');
@@ -94,16 +215,44 @@
         tg.showAlert("Түшүндүм. Жакшы күн каалайм! 😊", function() { tg.close(); });
     }
 
+    // Кийинки баскычын басканда текшерүү
     function checkDate() {
-        if (!document.getElementById('date').value) {
-            tg.showAlert("⚠️ Өтүнүч, күн менен убакытты тандаңыз!");
+        const dateVal = document.getElementById('dateInput').value;
+        if (!dateVal) {
+            tg.showAlert("⚠️ Өтүнүч, күндү тандаңыз!");
             return;
         }
+
+        // Убакыт барабанынан тандалган сандарды алуу
+        const hourItems = hourWheel.querySelectorAll('.wheel-item');
+        const minuteItems = minuteWheel.querySelectorAll('.wheel-item');
+        let selectedHour = "00";
+        let selectedMinute = "00";
+
+        hourItems.forEach(item => { if (item.classList.contains('active')) selectedHour = item.textContent; });
+        minuteItems.forEach(item => { if (item.classList.contains('active')) selectedMinute = item.textContent; });
+
+        if (selectedHour === "00" && selectedMinute === "00") {
+            // Эгер ортодо тандалбаса, биринчисин алат
+            selectedHour = hourItems[18].textContent; 
+        }
+
+        // Маалыматты сактоо үчүн жашыруун инпут түзөбүз
+        let hiddenInput = document.getElementById('hiddenDate');
+        if (!hiddenInput) {
+            hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.id = 'hiddenDate';
+            document.body.appendChild(hiddenInput);
+        }
+        hiddenInput.value = `${dateVal}T${selectedHour}:${selectedMinute}`;
+
         goToPage(3);
     }
 
+    // Маалыматты ботко жөнөтүү
     function sendData() {
-        const dateVal = document.getElementById('date').value;
+        const dateVal = document.getElementById('hiddenDate').value;
         const foodVal = document.getElementById('food').value;
 
         const payload = {
@@ -119,9 +268,7 @@
             } else {
                 tg.sendData(JSON.stringify(payload));
             }
-            // Жабууну 1 секундга кечиктиребиз
             setTimeout(() => { tg.close(); }, 1000); 
-            
         } catch (error) {
             tg.showAlert("КАТА: " + error.message);
         }
