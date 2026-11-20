@@ -196,7 +196,7 @@
         goToPage(3);
     }
 
-    // 3-бетте "Жөнөтүүнү" басканда
+     // 3-бетте "Жөнөтүүнү" басканда
     function sendData() {
         const dateVal = document.getElementById('date').value;
         const foodVal = document.getElementById('food').value;
@@ -208,9 +208,14 @@
             food: foodVal
         };
 
-        // Ботко маалыматты жөнөтүү
-        tg.sendData(JSON.stringify(payload));
-        tg.close();
+        try {
+            // Ботко маалыматты жөнөтүү
+            tg.sendData(JSON.stringify(payload));
+            tg.close();
+        } catch (error) {
+            // Эгер ката кетсе, телефондун экранына чыгарабыз
+            tg.showAlert("КАТА кетти: " + error.message);
+        }
     }
 </script>
 </body>
