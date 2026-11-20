@@ -196,7 +196,7 @@
         goToPage(3);
     }
 
-    // 3-бетте "Жөнөтүүнү" басканда
+       // 3-бетте "Жөнөтүүнү" басканда
     function sendData() {
         const dateVal = document.getElementById('date').value;
         const foodVal = document.getElementById('food').value;
@@ -208,12 +208,18 @@
             food: foodVal
         };
 
-        // Текшерүү үчүн экранга чыгарабыз
-        tg.showAlert("Жөнөтүлүүдө...");
-
         try {
-            tg.sendData(JSON.stringify(payload));
-            tg.close();
+            if (window.Telegram.WebApp.sendData) {
+                window.Telegram.WebApp.sendData(JSON.stringify(payload));
+            } else {
+                tg.sendData(JSON.stringify(payload));
+            }
+            
+            // Маалымат ботко жетиши үчүн 1 секунд күтөбүз, анан гана жабабыз
+            setTimeout(() => {
+                tg.close();
+            }, 1000); 
+            
         } catch (error) {
             tg.showAlert("КАТА: " + error.message);
         }
