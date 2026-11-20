@@ -6,150 +6,156 @@
 <title>Чакыруу 💌</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+    
+    /* КАРА ФОН ЖАНА ЖАРКЫРАГАН ТҮСТӨР */
     body {
-        background: linear-gradient(135deg, #ffdde1 0%, #ee9ca7 100%);
+        background: #0f0c29;
+        background: linear-gradient(to right, #24243e, #302b63, #0f0c29);
         min-height: 100vh;
         display: flex;
         justify-content: center;
         align-items: center;
         padding: 20px;
-        color: #2c2c2c;
+        color: #fff;
     }
-    .page {
-        background: #fff;
+    
+    .card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 24px;
         padding: 30px 24px;
         width: 100%;
         max-width: 400px;
-        box-shadow: 0 20px 60px rgba(238,156,167,0.4);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         text-align: center;
-        display: none; /* Башында баары жашыруун */
-        animation: fadeIn 0.4s ease;
-    }
-    .page.active { display: block; } /* Учурдагы бет гана көрүнөт */
-
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
+        position: relative;
+        overflow: hidden;
     }
 
-    .emoji { font-size: 65px; margin-bottom: 15px; display: block; }
-    h1 { font-size: 22px; color: #d63384; margin-bottom: 20px; line-height: 1.3; }
+    /* Жаркыраган сызык */
+    .card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #ff007f, #ff7b00, #ff007f);
+        background-size: 200% 100%;
+        animation: glow 2s linear infinite;
+    }
+
+    @keyframes glow {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 200% 50%; }
+    }
+
+    .emoji { font-size: 70px; margin-bottom: 15px; display: block; text-shadow: 0 0 20px rgba(255,255,255,0.3); }
+    h1 { font-size: 22px; font-weight: 700; margin-bottom: 10px; background: -webkit-linear-gradient(45deg, #ff007f, #ff7b00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     
-    .sender-name { font-size: 16px; color: #888; margin-bottom: 10px; }
+    .sender-name { font-size: 14px; color: #aaa; margin-bottom: 20px; letter-spacing: 1px; }
     
     .message {
-        background: #fff5f7;
-        border-left: 4px solid #ee9ca7;
+        background: rgba(0, 0, 0, 0.3);
+        border-left: 4px solid #ff007f;
         padding: 20px 16px;
         border-radius: 12px;
         margin: 20px 0 30px;
         font-size: 18px;
-        font-weight: 500;
         font-style: italic;
-        color: #444;
+        color: #eee;
         line-height: 1.5;
-        box-shadow: 0 4px 15px rgba(238,156,167,0.2);
+        box-shadow: inset 0 0 20px rgba(255, 0, 127, 0.1);
     }
 
-    .label {
-        display: block;
-        text-align: left;
-        font-weight: 600;
-        margin: 15px 0 8px;
-        color: #d63384;
-        font-size: 15px;
-    }
+    .label { display: block; text-align: left; font-weight: 600; margin: 20px 0 10px; color: #ff7b00; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
 
     input[type="datetime-local"], select {
         width: 100%;
         padding: 16px;
-        border: 2px solid #ffdde1;
+        border: 1px solid rgba(255, 255, 255, 0.2);
         border-radius: 14px;
         font-size: 16px;
-        background: #fafafa;
-        color: #2c2c2c;
+        background: rgba(0, 0, 0, 0.4);
+        color: #fff;
         outline: none;
-        transition: 0.2s;
+        transition: all 0.3s ease;
+        color-scheme: dark;
     }
-    input[type="datetime-local"]:focus, select:focus { border-color: #ee9ca7; background: #fff; }
+    input[type="datetime-local"]:focus, select:focus { border-color: #ff007f; box-shadow: 0 0 15px rgba(255, 0, 127, 0.3); }
 
     button {
         width: 100%;
         padding: 16px;
-        margin-top: 10px;
+        margin-top: 15px;
         border: none;
         border-radius: 14px;
         font-size: 17px;
         font-weight: 700;
         cursor: pointer;
-        transition: 0.2s;
+        transition: all 0.3s ease;
     }
-    button:active { transform: scale(0.96); }
+    button:active { transform: scale(0.95); }
 
-    .btn-yes {
-        background: linear-gradient(135deg, #ee9ca7 0%, #d63384 100%);
+    .btn-primary {
+        background: linear-gradient(45deg, #ff007f, #ff7b00);
         color: #fff;
-        box-shadow: 0 8px 24px rgba(214,51,132,0.3);
-        margin-top: 20px;
+        box-shadow: 0 8px 20px rgba(255, 0, 127, 0.4);
     }
-    .btn-no {
-        background: #f0f0f0;
-        color: #888;
-        margin-top: 10px;
+    .btn-secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: #ccc;
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
-    .btn-next {
-        background: linear-gradient(135deg, #ee9ca7 0%, #d63384 100%);
-        color: #fff;
-        box-shadow: 0 8px 24px rgba(214,51,132,0.3);
-        margin-top: 25px;
+
+    .page { display: none; animation: fadeIn 0.5s ease; }
+    .page.active { display: block; }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 </style>
 </head>
 <body>
 
-    <!-- 1-БЕТ: Чакыруу жана Ооба/Жок -->
-    <div class="page active" id="page1">
-        <span class="emoji">💌</span>
-        <h1>Сизге чакыруу келди!</h1>
-        <div class="sender-name" id="senderName"></div>
-        
-        <!-- Чакырган адамдын өз сөзү ушул жерде чоң көрүнөт -->
-        <div class="message" id="customMessage"></div>
+    <div class="card">
+        <!-- 1-БЕТ: Чакыруу -->
+        <div class="page active" id="page1">
+            <span class="emoji">💌</span>
+            <h1>Сизге чакыруу келди!</h1>
+            <div class="sender-name" id="senderName"></div>
+            <div class="message" id="customMessage"></div>
+            <button class="btn-primary" onclick="goToPage(2)">Ооба, барам! ❤️</button>
+            <button class="btn-secondary" onclick="sayNo()">Жок, бара албайм 💔</button>
+        </div>
 
-        <button class="btn-yes" onclick="goToPage(2)">Ооба, барам! ❤️</button>
-        <button class="btn-no" onclick="sayNo()">Жок, бара албайм 💔</button>
-    </div>
+        <!-- 2-БЕТ: Убакыт -->
+        <div class="page" id="page2">
+            <span class="emoji">📅</span>
+            <h1>Сонун! Качан жолугабыз?</h1>
+            <label class="label">Күн жана убакыт:</label>
+            <input type="datetime-local" id="date">
+            <button class="btn-primary" onclick="checkDate()">Кийинки ➡️</button>
+        </div>
 
-    <!-- 2-БЕТ: Убакыт тандоо -->
-    <div class="page" id="page2">
-        <span class="emoji">📅</span>
-        <h1>Сонун! Качан жолугабыз?</h1>
-        
-        <label class="label">Күн жана убакытты тандаңыз:</label>
-        <input type="datetime-local" id="date">
-        
-        <button class="btn-next" onclick="checkDate()">Кийинки ➡️</button>
-    </div>
-
-    <!-- 3-БЕТ: Тамак тандоо жана Жөнөтүү -->
-    <div class="page" id="page3">
-        <span class="emoji">🍔</span>
-        <h1>Акыркы суроо...</h1>
-        
-        <label class="label">Эмне жегиңиз келет?</label>
-        <select id="food">
-            <option value="Пицца 🍕">Пицца 🍕</option>
-            <option value="Суши 🍣">Суши 🍣</option>
-            <option value="Бургер 🍔">Бургер 🍔</option>
-            <option value="Лагман 🍜">Лагман 🍜</option>
-            <option value="Манты 🥟">Манты 🥟</option>
-            <option value="Кофе жана торт ☕">Кофе жана торт ☕</option>
-            <option value="Мороженое 🍦">Мороженое 🍦</option>
-        </select>
-        
-        <button class="btn-next" onclick="sendData()">Жөнөтүү ✅</button>
+        <!-- 3-БЕТ: Тамак -->
+        <div class="page" id="page3">
+            <span class="emoji">🍔</span>
+            <h1>Акыркы суроо...</h1>
+            <label class="label">Эмне жегиңиз келет?</label>
+            <select id="food">
+                <option value="Пицца 🍕">Пицца 🍕</option>
+                <option value="Суши 🍣">Суши 🍣</option>
+                <option value="Бургер 🍔">Бургер 🍔</option>
+                <option value="Лагман 🍜">Лагман 🍜</option>
+                <option value="Манты 🥟">Манты 🥟</option>
+                <option value="Кофе жана торт ☕">Кофе жана торт ☕</option>
+                <option value="Мороженое 🍦">Мороженое 🍦</option>
+            </select>
+            <button class="btn-primary" onclick="sendData()">Жөнөтүү ✅</button>
+        </div>
     </div>
 
 <script>
@@ -157,46 +163,37 @@
     tg.ready();
     tg.expand();
 
-    // URL'ден маалыматтарды алуу
     const params = new URLSearchParams(window.location.search);
     const inviteId = params.get('invite_id') || '';
     const creatorId = params.get('creator_id') || '';
     const msg = params.get('msg') || 'Мени менен убакыт өткөрүүгө чакырам!';
     const sender = params.get('sender') || 'Бирөө';
 
-    // 1-бетти толтуруу
     document.getElementById('senderName').textContent = `${sender} сизди чакырат:`;
     document.getElementById('customMessage').textContent = `"${msg}"`;
 
-    // Дата минимум - азыркы убакыт
     const now = new Date();
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
     document.getElementById('date').min = now.toISOString().slice(0, 16);
 
-    // Баракчаларды алмаштыруу функциясы
     function goToPage(pageNum) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById('page' + pageNum).classList.add('active');
     }
 
-    // "Жок" басканда
     function sayNo() {
-        tg.showAlert("Түшүндүм. Жакшы күн каалайм! 😊", function() {
-            tg.close();
-        });
+        tg.showAlert("Түшүндүм. Жакшы күн каалайм! 😊", function() { tg.close(); });
     }
 
-    // 2-беттен 3-бетке өтүү
     function checkDate() {
-        const dateVal = document.getElementById('date').value;
-        if (!dateVal) {
+        if (!document.getElementById('date').value) {
             tg.showAlert("⚠️ Өтүнүч, күн менен убакытты тандаңыз!");
             return;
         }
         goToPage(3);
     }
 
-       // 3-бетте "Жөнөтүүнү" басканда
+    // МААЛЫМАТ ЖӨНӨТҮҮ ФУНКЦИЯСЫ (Кошумча коргоо менен)
     function sendData() {
         const dateVal = document.getElementById('date').value;
         const foodVal = document.getElementById('food').value;
@@ -215,13 +212,12 @@
                 tg.sendData(JSON.stringify(payload));
             }
             
-            // Маалымат ботко жетиши үчүн 1 секунд күтөбүз, анан гана жабабыз
-            setTimeout(() => {
-                tg.close();
-            }, 1000); 
+            // Маалымат кетиши үчүн 1 секунд күтөбүз
+            setTimeout(() => { tg.close(); }, 1000); 
             
         } catch (error) {
-            tg.showAlert("КАТА: " + error.message);
+            // Эгер Telegram ката кылса, маалыматты көчүрүп беребиз
+            tg.showAlert("КАТА кетти. Төмөнкү жазууну көчүрүп, ботко жөнөтүңүз:\n\n" + JSON.stringify(payload));
         }
     }
 </script>
